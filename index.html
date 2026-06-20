@@ -3893,11 +3893,11 @@ function inviteFriend(){
 
 /* ===================== 데일리 포인트 ===================== */
 var REWARDS=[
-  {cost:500, name:'인바디 무료 1회'},
-  {cost:1000, name:'PT 상담 우선권'},
-  {cost:2000, name:'PT 할인권'},
-  {cost:3000, name:'휘트니스88 굿즈'},
-  {cost:5000, name:'PT 체험권 1회'}
+  {cost:300,  name:'헬스장 1일 이용권',     desc:'간석역 휘트니스88 하루 무료'},
+  {cost:700,  name:'헬스 1주일 이용권',     desc:'간석역 휘트니스88 7일 무료'},
+  {cost:1500, name:'PT 1회 무료권',         desc:'1:1 퍼스널 트레이닝 1회'},
+  {cost:2500, name:'헬스 회원권 1개월 추가', desc:'회원권 등록 시 +1개월'},
+  {cost:4000, name:'PT 10% 추가 증정',      desc:'PT 등록 시 횟수 10% 더'}
 ];
 function addPoints(n, reason){
   DB.points=(DB.points||0)+n; save(); updatePtsChip();
@@ -3955,7 +3955,8 @@ function renderBenefit(){
   var rl=document.getElementById('reward-list');
   if(rl) rl.innerHTML=REWARDS.map(function(r){
     var ok=p>=r.cost;
-    return '<div class="reward-row"><span class="reward-cost">'+r.cost.toLocaleString()+'P</span><span class="reward-name">'+esc(r.name)+'</span>'+
+    return '<div class="reward-row"><span class="reward-cost">'+r.cost.toLocaleString()+'P</span>'+
+      '<span class="reward-name"><div>'+esc(r.name)+'</div><div style="font-size:11px;color:var(--tx3);font-weight:500;margin-top:1px;">'+esc(r.desc||'')+'</div></span>'+
       '<button class="reward-go '+(ok?'on':'off')+'" onclick="'+(ok?'redeemReward(\''+esc(r.name)+'\')':'toast(\'포인트가 부족해요\')')+'">'+(ok?'사용 신청':'잠김')+'</button></div>';
   }).join('');
 }
