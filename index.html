@@ -1297,8 +1297,8 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.9 6.5.95-4.7 4.58 1.1 6.47L12 17.9l-5.8 3.05 1.1-6.47-4.7-4.58 6.5-.95z"/></svg>
         <b id="hd-pts-num">0</b>P
       </button>
-      <button class="btn-o" onclick="openProfile()" id="hd-goal-btn" style="width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;" title="목표 설정">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/></svg>
+      <button class="btn-o" onclick="openProfile()" id="hd-goal-btn" style="height:40px;padding:0 13px;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;border-color:var(--gb);color:var(--gold);" title="목표 설정">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/></svg>목표
       </button>
     </div>
   </div>
@@ -1308,6 +1308,36 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
     <div style="margin-bottom:14px;">
       <div class="sec-eyebrow">나의 식단 관리</div>
       <div class="sec-title" id="diet-greet">오늘도 클린하게 🍽️</div>
+    </div>
+
+    <!-- 목표 설정 배너 (목표 미설정 시 표시) -->
+    <div id="goal-banner" onclick="openProfile()" style="display:none;align-items:center;gap:13px;padding:16px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:16px;margin-bottom:14px;cursor:pointer;box-shadow:0 6px 20px rgba(184,134,11,.28);">
+      <div style="flex:none;width:42px;height:42px;border-radius:12px;background:rgba(0,0,0,.13);display:flex;align-items:center;justify-content:center;color:#0a0a0c;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/></svg></div>
+      <div style="flex:1;min-width:0;color:#0a0a0c;"><div style="font-size:15px;font-weight:900;">먼저 목표를 설정하세요 🎯</div><div style="font-size:12px;font-weight:600;margin-top:1px;opacity:.85;">키·몸무게 입력하면 맞춤 목표 칼로리 자동 계산</div></div>
+      <span style="flex:none;color:#0a0a0c;font-size:22px;font-weight:800;">›</span>
+    </div>
+
+    <!-- 식단 달력 (본앱과 동일) -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <button class="cal-nav-btn" onclick="dietWeekMove(-1)">‹</button>
+        <div style="display:flex;align-items:center;gap:7px;">
+          <div style="font-size:14px;font-weight:700;color:var(--tx);" id="diet-week-label"></div>
+          <button id="diet-month-toggle" onclick="toggleDietMonth()" style="background:var(--gd);border:0.5px solid var(--gb);color:var(--gold);font-size:10px;font-weight:700;cursor:pointer;font-family:var(--fs);border-radius:99px;padding:2px 8px;white-space:nowrap;">월 전체 ▾</button>
+        </div>
+        <button class="cal-nav-btn" onclick="dietWeekMove(1)">›</button>
+      </div>
+      <div class="wk-strip" id="diet-week-grid"></div>
+      <div id="diet-month-wrap" style="display:none;margin-top:12px;">
+        <div class="cal-wrap">
+          <div class="cal-nav"><button class="cal-nav-btn" onclick="dietCalMove(-1)">‹</button><div class="cal-title" id="diet-cal-title"></div><button class="cal-nav-btn" onclick="dietCalMove(1)">›</button></div>
+          <div class="cal-grid" id="diet-cal-grid"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:11px;color:var(--tx2);">
+        <div style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:4px;border-radius:2px;background:#1f9d57;"></span>식단</div>
+        <div style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:4px;border-radius:2px;background:#2f6fd6;"></span>운동</div>
+      </div>
     </div>
 
     <!-- 칼로리 히어로 -->
@@ -1339,7 +1369,7 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
     </div>
 
     <!-- 잠금 기능(본앱 유도) -->
-    <div class="locked" onclick="openMainApp()">
+    <div class="locked" onclick="lockedFeature('AI 스마트 영양사 · 냉장고 렌즈','사진 한 장으로 칼로리 자동 계산하고, 맞춤 식단까지 추천받는 기능이에요.')">
       <div class="lk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M12 8.6 13 11l2.4 1-2.4 1-1 2.4-1-2.4L8.6 12 11 11Z"/></svg></div>
       <div class="lk-t"><div class="lk-name">AI 스마트 영양사 · 냉장고 렌즈</div><div class="lk-sub">사진 한 장으로 칼로리 자동 계산 · 맞춤 식단 추천</div></div>
       <div class="lk-tag">PT회원</div>
@@ -1360,6 +1390,29 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
       <div class="sec-title">오늘의 트레이닝 💪</div>
     </div>
 
+    <!-- 운동 달력 (본앱과 동일) -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <button class="cal-nav-btn" onclick="wpWeekMove(-1)">‹</button>
+        <div style="display:flex;align-items:center;gap:7px;">
+          <div style="font-size:14px;font-weight:700;color:var(--tx);" id="wp-week-label"></div>
+          <button id="wp-month-toggle" onclick="toggleWPMonth()" style="background:var(--gd);border:0.5px solid var(--gb);color:var(--gold);font-size:10px;font-weight:700;cursor:pointer;font-family:var(--fs);border-radius:99px;padding:2px 8px;white-space:nowrap;">월 전체 ▾</button>
+        </div>
+        <button class="cal-nav-btn" onclick="wpWeekMove(1)">›</button>
+      </div>
+      <div class="wk-strip" id="wp-week-grid"></div>
+      <div id="wp-month-wrap" style="display:none;margin-top:12px;">
+        <div class="cal-wrap">
+          <div class="cal-nav"><button class="cal-nav-btn" onclick="wpCalMove(-1)">‹</button><div class="cal-title" id="wp-cal-title"></div><button class="cal-nav-btn" onclick="wpCalMove(1)">›</button></div>
+          <div class="cal-grid" id="wp-cal-grid"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:11px;color:var(--tx2);">
+        <div style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:4px;border-radius:2px;background:#1f9d57;"></span>식단</div>
+        <div style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:4px;border-radius:2px;background:#2f6fd6;"></span>운동</div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="ct">오늘 운동 요약</div>
       <div class="g3">
@@ -1374,13 +1427,7 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
       <div id="wo-list"><div style="text-align:center;color:var(--tx3);font-size:13px;padding:18px 0;">아직 기록이 없어요. 아래 버튼으로 운동을 추가해보세요.</div></div>
     </div>
 
-    <!-- 주간 스트립 -->
-    <div class="card">
-      <div class="ct">이번 주 운동</div>
-      <div class="wk-strip" id="wo-week"></div>
-    </div>
-
-    <div class="locked" onclick="openMainApp()">
+    <div class="locked" onclick="lockedFeature('PT 일지 · 개인최고 · 체형/보행 리포트','트레이너 루틴, 성장 비교 그래프, 자세·보행 AI 분석까지 받는 기능이에요.')">
       <div class="lk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5h10v3a5 5 0 0 1-10 0v-3Z"/><path d="M7 5.5H4.5V7A2.5 2.5 0 0 0 7 9.5M17 5.5h2.5V7A2.5 2.5 0 0 1 17 9.5"/><path d="M9.5 14h5M9 20h6M12 14v3"/></svg></div>
       <div class="lk-t"><div class="lk-name">PT 일지 · 개인최고 · 체형/보행 리포트</div><div class="lk-sub">트레이너 루틴 · 성장 비교 그래프 · 휴식 타이머</div></div>
       <div class="lk-tag">PT회원</div>
@@ -1572,6 +1619,30 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
       <div id="wm-today-list"></div>
     </div>
     <div style="height:env(safe-area-inset-bottom);"></div>
+  </div>
+</div>
+
+<!-- ════════ 날짜별 기록 팝업 ════════ -->
+<div id="day-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9500;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeDayPopup()">
+  <div style="width:100%;max-width:400px;background:var(--bg3);border-radius:20px;padding:22px;box-shadow:0 22px 60px rgba(0,0,0,.3);max-height:80vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-size:17px;font-weight:800;color:var(--tx);" id="dp-title">기록</div>
+      <button onclick="closeDayPopup()" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--bd2);background:transparent;color:var(--tx3);cursor:pointer;font-size:16px;">✕</button>
+    </div>
+    <div id="dp-body"></div>
+  </div>
+</div>
+
+<!-- ════════ PT 회원 전용 기능 안내 팝업 ════════ -->
+<div id="locked-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9600;align-items:center;justify-content:center;padding:24px;" onclick="if(event.target===this)closeLockedPopup()">
+  <div style="width:100%;max-width:380px;background:var(--bg3);border-radius:22px;padding:26px 24px;box-shadow:0 22px 60px rgba(0,0,0,.35);text-align:center;">
+    <div style="width:58px;height:58px;margin:0 auto 16px;border-radius:17px;background:var(--gd);display:flex;align-items:center;justify-content:center;color:var(--gold);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+    <div style="font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--gold3);margin-bottom:8px;">PT 회원 전용 기능</div>
+    <div style="font-size:18px;font-weight:900;color:var(--tx);margin-bottom:8px;" id="lp-title">기능 이름</div>
+    <div style="font-size:13.5px;color:var(--tx2);line-height:1.6;margin-bottom:6px;" id="lp-desc"></div>
+    <div style="font-size:13.5px;color:var(--tx2);line-height:1.6;margin-bottom:22px;">휘트니스88 <b style="color:var(--gold)">PT를 등록</b>하면 본앱에서 바로 사용할 수 있어요 💪</div>
+    <button onclick="closeLockedPopup();applyPT();" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:12px;color:#0a0a0c;font-family:var(--fs);font-size:15px;font-weight:800;cursor:pointer;margin-bottom:9px;">무료 PT 체험 신청하기 →</button>
+    <button onclick="closeLockedPopup()" style="width:100%;padding:12px;background:transparent;border:none;color:var(--tx3);font-family:var(--fs);font-size:13.5px;font-weight:600;cursor:pointer;">닫기</button>
   </div>
 </div>
 
@@ -3613,6 +3684,7 @@ function switchTab(t){
   });
   document.getElementById('fab-diet').style.display    = t==='diet'?'block':'none';
   document.getElementById('fab-workout').style.display = t==='workout'?'block':'none';
+  if(t==='diet') renderDiet();
   if(t==='market') renderMarket();
   if(t==='workout') renderWorkout();
   if(t==='benefit') renderBenefit();
@@ -3622,6 +3694,7 @@ function switchTab(t){
 /* ===================== 식단 ===================== */
 function renderDiet(){
   var d=dayOf(today()), T=targets();
+  var gb=document.getElementById('goal-banner'); if(gb) gb.style.display = T.cal ? 'none' : 'flex';
   var sum={cal:0,prot:0,carb:0,fat:0};
   d.meals.forEach(function(m){ sum.cal+=m.kcal; sum.prot+=m.p; sum.carb+=m.c; sum.fat+=m.f; });
   document.getElementById('c-actual').textContent=Math.round(sum.cal).toLocaleString();
@@ -3649,6 +3722,7 @@ function renderDiet(){
     }).join('');
   }
   if(document.getElementById('diet-modal').style.display!=='none') renderTodayMealList();
+  renderDietCal();
 }
 function gauge(tk,gn,val,goal,unit,color){
   val=Math.round(val); goal=Math.round(goal||0);
@@ -3725,24 +3799,91 @@ function renderWorkout(){
       return '<div class="row-item"><span class="row-dot" style="background:'+(w.type==='cardio'?'#3f6ad8':'var(--gold)')+';"></span><div class="row-main"><div class="row-name">'+esc(w.name)+'</div><div class="row-sub">'+sub+'</div></div><span class="row-kcal">'+Math.round(w.kcal)+'</span><button class="row-del" onclick="delWorkout('+i+')">✕</button></div>';
     }).join('');
   }
-  renderWeekStrip();
+  renderWpCal();
   if(document.getElementById('workout-modal').style.display!=='none') renderTodayWoList();
 }
-function renderWeekStrip(){
-  var labels=['일','월','화','수','목','금','토'];
-  var now=new Date(); var dow=now.getDay();
-  var html='';
-  for(var i=0;i<7;i++){
-    var dt=new Date(now); dt.setDate(now.getDate()-dow+i);
-    var key=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
-    var has=DB.days[key]&&DB.days[key].workouts&&DB.days[key].workouts.length;
-    var isToday=key===today();
-    html+='<div style="text-align:center;padding:8px 0;border-radius:10px;'+(isToday?'background:var(--gd);border:0.5px solid var(--gb);':'')+'">'+
-      '<div style="font-size:11px;color:var(--tx3);margin-bottom:5px;">'+labels[i]+'</div>'+
-      '<div style="width:22px;height:22px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;'+(has?'background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0a0a0c;':'background:rgba(0,0,0,.05);color:var(--tx3);')+'font-size:11px;font-weight:800;">'+(has?'✓':dt.getDate())+'</div></div>';
-  }
-  document.getElementById('wo-week').innerHTML=html;
+
+/* ===================== 식단·운동 달력 (본앱과 동일) ===================== */
+function dk(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+function hasDiet(key){ var d=DB.days[key]; return !!(d&&d.meals&&d.meals.length); }
+function hasWorkout(key){ var d=DB.days[key]; return !!(d&&d.workouts&&d.workouts.length); }
+// 주간 스트립 (기준일 -3 ~ +3, 식단=초록·운동=파랑 점)
+function renderWeek(anchorVal, gridId, labelId){
+  var center=anchorVal||today(); var c=new Date(center+'T00:00:00');
+  var days=[]; for(var i=-3;i<=3;i++){ var d=new Date(c); d.setDate(c.getDate()+i); days.push(d); }
+  var lbl=document.getElementById(labelId);
+  if(lbl) lbl.textContent=(days[0].getMonth()+1)+'월 '+days[0].getDate()+'일 – '+(days[6].getMonth()+1)+'월 '+days[6].getDate()+'일';
+  var dows=['일','월','화','수','목','금','토'], tdy=today();
+  var wrap=document.getElementById(gridId); if(!wrap) return; wrap.innerHTML='';
+  days.forEach(function(d){
+    var key=dk(d.getFullYear(),d.getMonth(),d.getDate());
+    var isToday=key===tdy, future=key>tdy, dots='';
+    if(hasDiet(key)) dots+='<div class="wk-cdot" style="background:#1f9d57"></div>';
+    if(hasWorkout(key)) dots+='<div class="wk-cdot" style="background:#2f6fd6"></div>';
+    var el=document.createElement('div');
+    el.className='wk-day'+(isToday?' today':'')+(future?' future':'');
+    el.innerHTML='<div class="wk-dow">'+dows[d.getDay()]+'</div><div class="wk-num">'+d.getDate()+'</div><div class="wk-dots">'+dots+'</div>';
+    if(!future) el.onclick=(function(k){return function(){ openDayPopup(k); };})(key);
+    wrap.appendChild(el);
+  });
 }
+// 월 전체 달력
+function renderMonth(year, month, gridId, titleId){
+  var grid=document.getElementById(gridId); if(!grid) return; grid.innerHTML='';
+  var t=document.getElementById(titleId); if(t) t.textContent=year+'년 '+(month+1)+'월';
+  ['일','월','화','수','목','금','토'].forEach(function(d){ var el=document.createElement('div'); el.className='cal-dow'; el.textContent=d; grid.appendChild(el); });
+  var now=new Date(), ty=now.getFullYear(), tm=now.getMonth(), td2=now.getDate(), tdy=today();
+  var firstDay=new Date(year,month,1).getDay(), lastDate=new Date(year,month+1,0).getDate(), prevLast=new Date(year,month,0).getDate();
+  for(var i=0;i<firstDay;i++){ var e=document.createElement('div'); e.className='cal-day other'; e.textContent=prevLast-firstDay+1+i; grid.appendChild(e); }
+  for(var dd=1;dd<=lastDate;dd++){
+    var key=dk(year,month,dd);
+    var isToday=(year===ty&&month===tm&&dd===td2), future=key>tdy, bars=[];
+    if(hasDiet(key)) bars.push('<div class="cal-bar bar-diet"></div>');
+    if(hasWorkout(key)) bars.push('<div class="cal-bar bar-workout"></div>');
+    var el=document.createElement('div');
+    el.className='cal-day'+(isToday?' today':'')+(future?' other':'');
+    el.innerHTML='<span>'+dd+'</span>'+(bars.length?'<div class="cal-bars">'+bars.join('')+'</div>':'');
+    if(!future) el.onclick=(function(k){return function(){ openDayPopup(k); };})(key);
+    grid.appendChild(el);
+  }
+  var rem=(7-(firstDay+lastDate)%7)%7; for(var j=1;j<=rem&&rem<7;j++){ var e2=document.createElement('div'); e2.className='cal-day other'; e2.textContent=j; grid.appendChild(e2); }
+}
+// 식단 달력 상태/조작
+var dietWeekAnchor=null, dietMonthOpen=false, dietCalYear=(new Date()).getFullYear(), dietCalMonth=(new Date()).getMonth();
+function renderDietCal(){ renderWeek(dietWeekAnchor,'diet-week-grid','diet-week-label'); if(dietMonthOpen) renderMonth(dietCalYear,dietCalMonth,'diet-cal-grid','diet-cal-title'); }
+function dietWeekMove(dir){ var c=dietWeekAnchor||today(); var d=new Date(c+'T00:00:00'); d.setDate(d.getDate()+dir*7); var nc=dk(d.getFullYear(),d.getMonth(),d.getDate()); if(nc>today())nc=today(); dietWeekAnchor=nc; renderDietCal(); }
+function toggleDietMonth(){ dietMonthOpen=!dietMonthOpen; document.getElementById('diet-month-wrap').style.display=dietMonthOpen?'block':'none'; document.getElementById('diet-month-toggle').textContent=dietMonthOpen?'주간만 보기 ▴':'월 전체 ▾'; if(dietMonthOpen) renderMonth(dietCalYear,dietCalMonth,'diet-cal-grid','diet-cal-title'); }
+function dietCalMove(d){ dietCalMonth+=d; if(dietCalMonth<0){dietCalMonth=11;dietCalYear--;} if(dietCalMonth>11){dietCalMonth=0;dietCalYear++;} renderMonth(dietCalYear,dietCalMonth,'diet-cal-grid','diet-cal-title'); }
+// 운동 달력 상태/조작
+var wpWeekAnchor=null, wpMonthOpen=false, wpCalYear=(new Date()).getFullYear(), wpCalMonth=(new Date()).getMonth();
+function renderWpCal(){ renderWeek(wpWeekAnchor,'wp-week-grid','wp-week-label'); if(wpMonthOpen) renderMonth(wpCalYear,wpCalMonth,'wp-cal-grid','wp-cal-title'); }
+function wpWeekMove(dir){ var c=wpWeekAnchor||today(); var d=new Date(c+'T00:00:00'); d.setDate(d.getDate()+dir*7); var nc=dk(d.getFullYear(),d.getMonth(),d.getDate()); if(nc>today())nc=today(); wpWeekAnchor=nc; renderWpCal(); }
+function toggleWPMonth(){ wpMonthOpen=!wpMonthOpen; document.getElementById('wp-month-wrap').style.display=wpMonthOpen?'block':'none'; document.getElementById('wp-month-toggle').textContent=wpMonthOpen?'주간만 보기 ▴':'월 전체 ▾'; if(wpMonthOpen) renderMonth(wpCalYear,wpCalMonth,'wp-cal-grid','wp-cal-title'); }
+function wpCalMove(d){ wpCalMonth+=d; if(wpCalMonth<0){wpCalMonth=11;wpCalYear--;} if(wpCalMonth>11){wpCalMonth=0;wpCalYear++;} renderMonth(wpCalYear,wpCalMonth,'wp-cal-grid','wp-cal-title'); }
+// 날짜 탭 → 그 날 기록 요약 팝업
+function openDayPopup(key){
+  var d=DB.days[key]||{meals:[],workouts:[]}; var p=key.split('-');
+  document.getElementById('dp-title').textContent=Number(p[1])+'월 '+Number(p[2])+'일 기록';
+  var html='', cMeals=(d.meals||[]), cal=0; cMeals.forEach(function(m){cal+=m.kcal;});
+  html+='<div style="font-size:12px;font-weight:800;color:#1f9d57;margin:0 0 6px;">🍽️ 식단'+(cMeals.length?' · 총 '+Math.round(cal).toLocaleString()+'kcal':'')+'</div>';
+  html+= cMeals.length ? ('<div style="margin-bottom:16px;">'+cMeals.map(function(m){ return '<div class="row-item"><span class="row-dot" style="background:'+(MEAL_COLORS[m.meal]||"#999")+';"></span><div class="row-main"><div class="row-name">'+esc(m.name)+'</div><div class="row-sub">'+m.meal+' · '+m.qty+'인분</div></div><span class="row-kcal">'+Math.round(m.kcal)+'</span></div>'; }).join('')+'</div>')
+    : '<div style="font-size:13px;color:var(--tx3);padding:3px 0 16px;">기록 없음</div>';
+  var wos=(d.workouts||[]);
+  html+='<div style="font-size:12px;font-weight:800;color:#2f6fd6;margin:0 0 6px;">💪 운동'+(wos.length?' · '+wos.length+'개':'')+'</div>';
+  html+= wos.length ? ('<div>'+wos.map(function(w){ var sub=w.type==='cardio'?(w.min+'분'):(w.sets.length+'세트'); return '<div class="row-item"><span class="row-dot" style="background:'+(w.type==='cardio'?"#3f6ad8":"var(--gold)")+';"></span><div class="row-main"><div class="row-name">'+esc(w.name)+'</div><div class="row-sub">'+sub+'</div></div><span class="row-kcal">'+Math.round(w.kcal)+'</span></div>'; }).join('')+'</div>')
+    : '<div style="font-size:13px;color:var(--tx3);padding:3px 0;">기록 없음</div>';
+  document.getElementById('dp-body').innerHTML=html;
+  document.getElementById('day-popup').style.display='flex';
+}
+function closeDayPopup(){ document.getElementById('day-popup').style.display='none'; }
+
+/* ===================== PT 회원 전용 기능 안내 ===================== */
+function lockedFeature(title, desc){
+  document.getElementById('lp-title').textContent=title;
+  document.getElementById('lp-desc').textContent=desc||'';
+  document.getElementById('locked-popup').style.display='flex';
+}
+function closeLockedPopup(){ document.getElementById('locked-popup').style.display='none'; }
 function openWorkoutEntry(){ if(checkTrial())return; openSheet('workout-modal'); document.getElementById('ex-search').value=''; document.getElementById('ex-drop').style.display='none'; document.getElementById('ex-picked').style.display='none'; pickedEx=null; renderTodayWoList(); }
 function closeWorkoutEntry(){ closeSheet('workout-modal'); }
 function searchEx(){
