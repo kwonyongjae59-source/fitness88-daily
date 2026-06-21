@@ -1661,6 +1661,30 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
   </div>
 </div>
 
+<!-- ════════ 친구 초대 팝업 ════════ -->
+<div id="invite-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9700;align-items:center;justify-content:center;padding:22px;" onclick="if(event.target===this)closeInvite()">
+  <div style="width:100%;max-width:380px;background:var(--bg3);border-radius:22px;padding:24px;box-shadow:0 22px 60px rgba(0,0,0,.35);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div style="font-size:18px;font-weight:900;color:var(--tx);">👋 친구 초대</div>
+      <button onclick="closeInvite()" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--bd2);background:transparent;color:var(--tx3);cursor:pointer;font-size:16px;">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--tx3);line-height:1.55;margin-bottom:16px;">친구에게 이 링크를 보내고, 함께 시작하면 <b style="color:var(--gold)">+300P</b> 받아요!</div>
+    <input id="invite-link" readonly onclick="this.select()" style="width:100%;background:var(--bg4);border:0.5px solid var(--bd2);border-radius:10px;color:var(--tx2);font-family:var(--fs);font-size:13px;padding:12px 13px;margin-bottom:12px;" value="">
+    <button onclick="inviteCopy()" class="btn-p" style="margin-bottom:8px;">링크 복사하기</button>
+    <button onclick="inviteShareSheet()" class="btn-o" style="width:100%;">카톡·공유 시트로 보내기</button>
+  </div>
+</div>
+
+<!-- ════════ 인스타 인증 이미지 팝업 ════════ -->
+<div id="cert-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9700;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeCert()">
+  <div style="width:100%;max-width:340px;text-align:center;">
+    <img id="cert-img" alt="오늘의 인증" style="width:100%;border-radius:16px;box-shadow:0 14px 44px rgba(0,0,0,.55);display:block;">
+    <div style="color:#fff;font-size:13px;line-height:1.6;margin:14px 0 12px;">사진을 <b>꾹 눌러</b> 저장하거나, 아래 버튼으로 공유하세요.<br>인스타 <b>스토리</b>에 올리면 인증 완료예요! 🎉</div>
+    <button onclick="certShare()" class="btn-p" style="margin-bottom:8px;">스토리에 공유하기</button>
+    <button onclick="closeCert()" style="width:100%;padding:11px;background:transparent;border:none;color:#c8ccd6;font-family:var(--fs);font-size:13px;cursor:pointer;">닫기</button>
+  </div>
+</div>
+
 <!-- ════════ PT 회원 전용 기능 안내 팝업 ════════ -->
 <div id="locked-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9600;align-items:center;justify-content:center;padding:24px;" onclick="if(event.target===this)closeLockedPopup()">
   <div style="width:100%;max-width:380px;background:var(--bg3);border-radius:22px;padding:26px 24px;box-shadow:0 22px 60px rgba(0,0,0,.35);text-align:center;">
@@ -4092,12 +4116,25 @@ function openKakao(){
 function openInsta(){ window.open(INSTA_URL,'_blank','noopener'); }
 // 외부인은 회원전용 본앱 대신 PT 전환 퍼널로 보냄
 function openMainApp(){ applyPT(); }
+function inviteLink(){ return location.href.split('?')[0].split('#')[0]; }
 function inviteFriend(){
-  var link=location.href.split('#')[0];
-  var msg='휘트니스88 데일리 - 운동하면 포인트 쌓이는 무료 앱 같이 써요!\n'+link;
-  if(navigator.share){ navigator.share({title:'휘트니스88 데일리',text:msg}).then(function(){ awardOnce('invited', 300, '친구 초대'); }).catch(function(){}); }
-  else { try{ navigator.clipboard.writeText(msg); }catch(e){} awardOnce('invited', 300, '친구 초대 (링크 복사됨)'); }
+  document.getElementById('invite-link').value=inviteLink();
+  document.getElementById('invite-popup').style.display='flex';
 }
+function giveInvitePoints(){ if(DB.meta&&DB.meta.invited) return false; if(!DB.meta)DB.meta={}; DB.meta.invited=true; DB.points=(DB.points||0)+300; save(); updatePtsChip(); return true; }
+function inviteCopy(){
+  var el=document.getElementById('invite-link'); var ok=false;
+  try{ el.focus(); el.select(); el.setSelectionRange(0,99999); ok=document.execCommand('copy'); }catch(e){}
+  try{ if(navigator.clipboard){ navigator.clipboard.writeText(el.value); ok=true; } }catch(e){}
+  var first=giveInvitePoints();
+  toast((ok?'링크가 복사됐어요 📋 친구에게 붙여넣기 하세요':'아래 주소를 길게 눌러 복사하세요')+(first?' · +300P ⭐':''));
+}
+function inviteShareSheet(){
+  var msg='휘트니스88 데일리 - 운동하면 포인트 쌓이는 무료 앱 같이 써요!\n'+inviteLink();
+  if(navigator.share){ navigator.share({text:msg}).then(function(){ if(giveInvitePoints()) toast('+300P 적립 ⭐ 친구 초대'); }).catch(function(){}); }
+  else { inviteCopy(); }
+}
+function closeInvite(){ document.getElementById('invite-popup').style.display='none'; }
 
 /* ===================== 데일리 포인트 ===================== */
 var REWARDS=[
@@ -4174,8 +4211,9 @@ function redeemReward(name){
 }
 
 /* ===================== 인스타 인증 이미지 공유 ===================== */
+var _certFile=null;
 function shareCert(){
-  var d=dayOf(today()), T=targets();
+  var d=dayOf(today());
   var cal=0; d.meals.forEach(function(m){cal+=m.kcal;});
   var wkcal=0, sets=0; d.workouts.forEach(function(w){ wkcal+=w.kcal; if(w.sets)sets+=w.sets.length; });
   var streak=computeStreak();
@@ -4184,38 +4222,36 @@ function shareCert(){
   var x=cv.getContext('2d');
   var g=x.createLinearGradient(0,0,S,S); g.addColorStop(0,'#15171d'); g.addColorStop(1,'#23262f');
   x.fillStyle=g; x.fillRect(0,0,S,S);
-  x.fillStyle='#d4af37'; x.font='800 44px "Noto Sans KR",sans-serif'; x.textAlign='center';
-  x.fillText('휘트니스88 데일리', S/2, 150);
-  x.fillStyle='#8a8f9c'; x.font='600 26px "Noto Sans KR",sans-serif';
-  x.fillText('오늘의 운동·식단 인증', S/2, 200);
-  // 중앙 큰 메시지
+  var rg=x.createRadialGradient(S*0.3,S*0.25,0,S*0.3,S*0.25,S*0.9); rg.addColorStop(0,'rgba(212,175,55,0.16)'); rg.addColorStop(1,'rgba(212,175,55,0)'); x.fillStyle=rg; x.fillRect(0,0,S,S);
+  x.textAlign='center';
+  x.fillStyle='#d4af37'; x.font='800 46px "Noto Sans KR",sans-serif'; x.fillText('휘트니스88 데일리', S/2, 150);
+  x.fillStyle='#8a8f9c'; x.font='600 27px "Noto Sans KR",sans-serif'; x.fillText('오늘의 운동·식단 인증', S/2, 196);
   x.fillStyle='#fff'; x.font='900 86px "Noto Sans KR",sans-serif';
-  x.fillText(streak>0?(streak+'일 연속 기록 🔥'):'오늘도 완료 ✅', S/2, 430);
-  // 수치 3개
+  x.fillText(streak>0?(streak+'일 연속 기록 중'):'오늘도 기록 완료', S/2, 430);
   function stat(cx, big, small){
-    x.fillStyle='#d4af37'; x.font='900 70px "Noto Sans KR",sans-serif'; x.fillText(big, cx, 640);
-    x.fillStyle='#c8ccd6'; x.font='600 28px "Noto Sans KR",sans-serif'; x.fillText(small, cx, 690);
+    x.fillStyle='#d4af37'; x.font='900 64px "Noto Sans KR",sans-serif'; x.fillText(big, cx, 650);
+    x.fillStyle='#c8ccd6'; x.font='600 28px "Noto Sans KR",sans-serif'; x.fillText(small, cx, 702);
   }
-  stat(S*0.25, (Math.round(cal)).toLocaleString(), '섭취 kcal');
+  stat(S*0.25, Math.round(cal).toLocaleString(), '섭취 kcal');
   stat(S*0.5, sets+'세트', '운동량');
   stat(S*0.75, Math.round(wkcal).toLocaleString(), '소모 kcal');
-  // 태그
-  x.fillStyle='#d4af37'; x.font='800 34px "Noto Sans KR",sans-serif';
-  x.fillText('@휘트니스88   #간석역PT', S/2, 900);
-  x.fillStyle='#6b7080'; x.font='500 24px "Noto Sans KR",sans-serif';
-  x.fillText('운동하면 포인트 쌓이는 무료 습관 앱', S/2, 960);
-  // 적립 + 공유/저장
+  x.fillStyle='#d4af37'; x.font='800 36px "Noto Sans KR",sans-serif'; x.fillText('@휘트니스88   #간석역PT', S/2, 905);
+  x.fillStyle='#6b7080'; x.font='500 25px "Noto Sans KR",sans-serif'; x.fillText('운동하면 포인트 쌓이는 무료 습관 앱', S/2, 958);
+  // 이미지를 화면에 띄움 → 어떤 브라우저(인스타 내부 포함)에서도 길게 눌러 저장 가능
+  document.getElementById('cert-img').src = cv.toDataURL('image/png');
+  document.getElementById('cert-popup').style.display='flex';
+  _certFile=null;
+  try{ cv.toBlob(function(b){ try{ _certFile=new File([b],'fitness88-daily.png',{type:'image/png'}); }catch(e){ _certFile=b; } },'image/png'); }catch(e){}
   awardDaily('insta', 50, '인스타 인증');
-  cv.toBlob(function(blob){
-    var file=new File([blob],'fitness88-daily.png',{type:'image/png'});
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      navigator.share({files:[file], title:'휘트니스88 데일리', text:'오늘도 운동 완료! #간석역PT @휘트니스88'}).catch(function(){});
-    } else {
-      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fitness88-daily.png'; a.click();
-      toast('인증 이미지를 저장했어요 · 인스타 스토리에 올려보세요!');
-    }
-  },'image/png');
 }
+function certShare(){
+  if(_certFile && navigator.canShare && navigator.canShare({files:[_certFile]})){
+    navigator.share({files:[_certFile], text:'오늘도 운동 완료! #간석역PT @휘트니스88'}).catch(function(){});
+  } else {
+    toast('사진을 길게 눌러 저장한 뒤 스토리에 올려주세요!');
+  }
+}
+function closeCert(){ document.getElementById('cert-popup').style.display='none'; }
 
 /* ===================== 30일 체험 잠금 ===================== */
 var TRIAL_DAYS=30;
