@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#f8f6f0">
-<title>휘트니스88 라이트 · 식단·운동·추천마켓</title>
+<title>휘트니스88 데일리 · 무료 운동·식단 앱</title>
+<!-- 홈 화면에 추가(앱처럼) -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="휘트니스88 데일리">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -1303,6 +1310,14 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
     </div>
   </div>
 
+  <!-- 홈 화면에 추가 안내 배너 -->
+  <div id="a2hs-banner" style="display:none;align-items:center;gap:10px;padding:11px 14px;background:linear-gradient(135deg,#15171d,#23262f);border-radius:13px;margin-bottom:14px;cursor:pointer;" onclick="openA2HS()">
+    <span style="flex:none;font-size:20px;">📲</span>
+    <div style="flex:1;min-width:0;color:#fff;"><div style="font-size:13.5px;font-weight:800;">홈 화면에 추가하면 앱처럼 써요</div><div style="font-size:11.5px;color:#9aa0ad;margin-top:1px;">한 번만 설정하면 아이콘으로 바로 열려요</div></div>
+    <span style="flex:none;color:var(--gold2);font-size:12.5px;font-weight:800;white-space:nowrap;">방법 보기 ›</span>
+    <button onclick="event.stopPropagation();dismissA2HS()" style="flex:none;width:24px;height:24px;border:none;background:transparent;color:#6b7080;font-size:15px;cursor:pointer;padding:0;">✕</button>
+  </div>
+
   <!-- ════════ 식단 탭 ════════ -->
   <div class="pg on" id="pg-diet">
     <div style="margin-bottom:14px;">
@@ -1630,6 +1645,19 @@ input::placeholder,textarea::placeholder{color:#5f5f5f;opacity:1;}
       <button onclick="closeDayPopup()" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--bd2);background:transparent;color:var(--tx3);cursor:pointer;font-size:16px;">✕</button>
     </div>
     <div id="dp-body"></div>
+  </div>
+</div>
+
+<!-- ════════ 홈 화면에 추가 안내 팝업 ════════ -->
+<div id="a2hs-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9600;align-items:center;justify-content:center;padding:22px;" onclick="if(event.target===this)closeA2HS()">
+  <div style="width:100%;max-width:390px;background:var(--bg3);border-radius:22px;padding:24px;box-shadow:0 22px 60px rgba(0,0,0,.35);max-height:86vh;overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div style="font-size:18px;font-weight:900;color:var(--tx);">📲 앱처럼 쓰기</div>
+      <button onclick="closeA2HS()" style="width:32px;height:32px;border-radius:50%;border:0.5px solid var(--bd2);background:transparent;color:var(--tx3);cursor:pointer;font-size:16px;">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--tx3);line-height:1.5;margin-bottom:16px;">홈 화면에 추가하면, 다음부터 아이콘 한 번으로 바로 열려요.</div>
+    <div id="a2hs-android-install" style="display:none;margin-bottom:14px;"><button onclick="a2hsInstall()" class="btn-p">한 번에 설치하기</button></div>
+    <div id="a2hs-steps"></div>
   </div>
 </div>
 
@@ -3877,6 +3905,45 @@ function openDayPopup(key){
 }
 function closeDayPopup(){ document.getElementById('day-popup').style.display='none'; }
 
+/* ===================== 홈 화면에 추가 (앱처럼 쓰기) ===================== */
+var _a2hsPrompt=null;
+window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); _a2hsPrompt=e; var b=document.getElementById('a2hs-android-install'); if(b&&document.getElementById('a2hs-popup').style.display==='flex') b.style.display='block'; });
+function isStandalone(){ try{ return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; }catch(e){ return false; } }
+function inAppBrowser(){ var ua=navigator.userAgent||''; return /Instagram|FBAN|FBAV|FB_IAB|KAKAO|NAVER|DaumApps|Line/i.test(ua); }
+function isIOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); }
+function initA2HS(){
+  if(isStandalone()) return;                                   // 이미 홈에 추가됨
+  try{ if(localStorage.getItem('a2hs_dismiss')) return; }catch(e){}
+  var b=document.getElementById('a2hs-banner'); if(b) b.style.display='flex';
+}
+function dismissA2HS(){ try{localStorage.setItem('a2hs_dismiss','1');}catch(e){} var b=document.getElementById('a2hs-banner'); if(b) b.style.display='none'; }
+function openA2HS(){
+  var ios=isIOS(), inApp=inAppBrowser();
+  var S=function(n,t){ return '<div style="display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;"><div style="flex:none;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#0a0a0c;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;">'+n+'</div><div style="flex:1;font-size:14px;color:var(--tx);line-height:1.5;">'+t+'</div></div>'; };
+  var html='';
+  if(inApp){
+    html+='<div style="background:var(--rdd);border:0.5px solid rgba(224,82,82,.3);border-radius:11px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--tx2);line-height:1.55;">⚠️ 지금은 <b>인스타그램(또는 카톡) 안</b>에서 열려서 홈 추가가 안 돼요.<br>먼저 <b>일반 브라우저로 열어주세요</b> 👇</div>';
+    html+=S(1, ios? '오른쪽 위 <b>···</b> 또는 <b>공유</b> 아이콘 탭 → <b>"브라우저에서 열기"</b> (Safari)'
+                  : '오른쪽 위 <b>⋮</b> 탭 → <b>"다른 브라우저로 열기"</b> 또는 <b>"Chrome으로 열기"</b>');
+    html+='<div style="border-top:0.5px dashed var(--bd2);margin:6px 0 16px;"></div>';
+    html+='<div style="font-size:12px;font-weight:800;color:var(--gold);margin-bottom:12px;">브라우저로 열렸으면 👇</div>';
+  }
+  if(ios){
+    html+=S(inApp?2:1, '화면 아래 <b>공유 버튼</b> (□ 위에 ↑) 탭');
+    html+=S(inApp?3:2, '메뉴 내려서 <b>"홈 화면에 추가"</b> 탭');
+    html+=S(inApp?4:3, '오른쪽 위 <b>"추가"</b> → 끝! 홈에 아이콘이 생겨요 🎉');
+  } else {
+    html+=S(inApp?2:1, '오른쪽 위 <b>⋮ (점 세개)</b> 탭');
+    html+=S(inApp?3:2, '<b>"홈 화면에 추가"</b> 또는 <b>"앱 설치"</b> 탭');
+    html+=S(inApp?4:3, '<b>"추가"</b> → 끝! 홈에 아이콘이 생겨요 🎉');
+  }
+  document.getElementById('a2hs-steps').innerHTML=html;
+  document.getElementById('a2hs-android-install').style.display = (_a2hsPrompt && !inApp) ? 'block' : 'none';
+  document.getElementById('a2hs-popup').style.display='flex';
+}
+function closeA2HS(){ document.getElementById('a2hs-popup').style.display='none'; }
+function a2hsInstall(){ if(_a2hsPrompt){ _a2hsPrompt.prompt(); _a2hsPrompt.userChoice.finally(function(){ _a2hsPrompt=null; closeA2HS(); dismissA2HS(); }); } }
+
 /* ===================== PT 회원 전용 기능 안내 ===================== */
 function lockedFeature(title, desc){
   document.getElementById('lp-title').textContent=title;
@@ -4196,6 +4263,7 @@ function init(){
   renderDiet(); renderMarket();
   setTimeout(adLoadProducts, 800);  // 본앱 DB의 실제 제휴상품 자동 반영
   if(trialInfo().locked){ showLock(); return; }   // 30일 지났으면 즉시 잠금
+  initA2HS();                       // 홈 화면에 추가 배너
   if(!DB.profile){ setTimeout(function(){ toast('「목표 설정」으로 시작해보세요 👆'); }, 700); }
 }
 init();
